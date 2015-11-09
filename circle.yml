@@ -1,0 +1,67 @@
+# Use, modification, and distribution are
+# subject to the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+# Copyright Adam Wulkiewicz 2015.
+
+machine:
+  environment:
+    # Boost branch
+    BOOST_BRANCH: master
+
+    # required directories
+    BOOST_DIR: boost-local
+    BENCHMARK_DIR: benchmark-geometry
+
+    # helper variables
+    PROJECT_ROOT: $HOME/$CIRCLE_PROJECT_REPONAME
+    BOOST_ROOT: $PROJECT_ROOT/$BOOST_DIR
+
+dependencies:
+  pre:
+    - sudo apt-get update
+
+    # gcc, g++, gcov
+    - sudo apt-get install gcc-4.8 g++-4.8 build-essential
+    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 10
+    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 10
+    - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-4.8 10
+    - sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 20
+    - sudo update-alternatives --set cc /usr/bin/gcc
+    - sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++ 20
+    - sudo update-alternatives --set c++ /usr/bin/g++
+    - sudo update-alternatives --config gcc
+    - sudo update-alternatives --config g++
+    - sudo update-alternatives --config gcov
+
+    # clone boost repository
+    - mkdir $BOOST_ROOT
+    - cd $BOOST_ROOT && git init .
+    - cd $BOOST_ROOT && git remote add --no-tags -t $BOOST_BRANCH origin https://github.com/boostorg/boost.git
+    - cd $BOOST_ROOT && git fetch --depth=1
+    - cd $BOOST_ROOT && git checkout $BOOST_BRANCH
+    - cd $BOOST_ROOT && git submodule update --init --merge
+    - cd $BOOST_ROOT && git remote set-branches --add origin $BOOST_BRANCH
+    - cd $BOOST_ROOT && git pull --recurse-submodules
+    - cd $BOOST_ROOT && git submodule update --init
+    - cd $BOOST_ROOT && git checkout $BOOST_BRANCH
+    - cd $BOOST_ROOT && git submodule foreach "git reset --quiet --hard; git clean -fxd"
+    - cd $BOOST_ROOT && git reset --hard; git clean -fxd
+    - cd $BOOST_ROOT && git status
+    # checkout the Boost.Geometry commit
+    - cd $BOOST_ROOT/libs/geometry && git checkout $CIRCLE_SHA1
+    # build b2 and create headers
+    - cd $BOOST_ROOT && ./bootstrap.sh
+    - cd $BOOST_ROOT && ./b2 headers
+
+    # clone benchmark repository
+    - clone git@github.com:awulkiew/$BENCHMARK_DIR $BENCHMARK_DIR
+
+test:
+  override:
+    # ./run.sh BOOST_ROOT TIMESTAMP SHA
+    - cd $BENCHMARK_DIR && ./run.sh $BOOST_ROOT `cd $BOOST_ROOT/libs/geometry && date -d"`git show --quiet --format="%ci"`" --utc +%Y.%m.%d-%H:%M:%S` $CIRCLE_SHA1
+
+  post:
+    - cd $BENCHMARK_DIR && git add results
+    - cd $BENCHMARK_DIR && git commit -m "$CIRCLE_SHA1"
