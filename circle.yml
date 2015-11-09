@@ -49,19 +49,20 @@ dependencies:
     - cd $BOOST_ROOT && git reset --hard; git clean -fxd
     - cd $BOOST_ROOT && git status
     # checkout the Boost.Geometry commit
-    - cd $BOOST_ROOT/libs/geometry && git checkout $CIRCLE_SHA1
+    - cd $BOOST_ROOT/libs/geometry && git checkout `cat $PROJECT_ROOT/sha`
     # build b2 and create headers
     - cd $BOOST_ROOT && ./bootstrap.sh
     - cd $BOOST_ROOT && ./b2 headers
 
     # clone benchmark repository
-    - clone git@github.com:awulkiew/$BENCHMARK_DIR $BENCHMARK_DIR
+    - git clone git@github.com:awulkiew/$BENCHMARK_DIR $BENCHMARK_DIR
 
 test:
   override:
     # ./run.sh BOOST_ROOT TIMESTAMP SHA
-    - cd $BENCHMARK_DIR && ./run.sh $BOOST_ROOT `cd $BOOST_ROOT/libs/geometry && date -d"`git show --quiet --format="%ci"`" --utc +%Y.%m.%d-%H:%M:%S` $CIRCLE_SHA1
+    - cd $BENCHMARK_DIR && ./run.sh $BOOST_ROOT `cd $BOOST_ROOT/libs/geometry && date -d"\`git show --quiet --format="%ci"\`" --utc +%Y.%m.%d-%H:%M:%S` `cat $PROJECT_ROOT/sha`
 
   post:
-    - cd $BENCHMARK_DIR && git add results
-    - cd $BENCHMARK_DIR && git commit -m "$CIRCLE_SHA1"
+    #- cd $BENCHMARK_DIR && git add results
+    #- cd $BENCHMARK_DIR && git commit -m "`cat $PROJECT_ROOT/sha`"
+    - cp $BENCHMARK_DIR/results/* $CIRCLE_ARTIFACTS/
