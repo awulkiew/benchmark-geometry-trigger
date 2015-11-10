@@ -73,6 +73,10 @@ test:
     #- cd $BENCHMARK_DIR && git add results
     #- cd $BENCHMARK_DIR && git commit -m "`cat $PROJECT_ROOT/sha`"
     #- cp $BENCHMARK_DIR/results/* $CIRCLE_ARTIFACTS/
+    - git config --global user.name "awulkiew-machine"
+    - git config --global user.email "awulkiew.machine@gmail.com"
+    - git config --global push.default simple
+
     - cd $BENCHMARK_DIR && git add results
     - cd $BENCHMARK_DIR && git commit -m 'Test'
     - cd $BENCHMARK_DIR && git push
