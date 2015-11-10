@@ -20,43 +20,43 @@ machine:
 
 dependencies:
   pre:
-    #- sudo apt-get update
+    - sudo apt-get update
 
     # gcc, g++, gcov
-    #- sudo apt-get install gcc-4.8 g++-4.8 build-essential
-    #- sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 10
-    #- sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 10
-    #- sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-4.8 10
-    #- sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 20
-    #- sudo update-alternatives --set cc /usr/bin/gcc
-    #- sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++ 20
-    #- sudo update-alternatives --set c++ /usr/bin/g++
-    #- sudo update-alternatives --config gcc
-    #- sudo update-alternatives --config g++
-    #- sudo update-alternatives --config gcov
+    - sudo apt-get install gcc-4.8 g++-4.8 build-essential
+    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 10
+    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 10
+    - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-4.8 10
+    - sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 20
+    - sudo update-alternatives --set cc /usr/bin/gcc
+    - sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++ 20
+    - sudo update-alternatives --set c++ /usr/bin/g++
+    - sudo update-alternatives --config gcc
+    - sudo update-alternatives --config g++
+    - sudo update-alternatives --config gcov
 
     # clone boost repository
-    #- mkdir $BOOST_ROOT
-    #- cd $BOOST_ROOT && git init .
-    #- cd $BOOST_ROOT && git remote add --no-tags -t $BOOST_BRANCH origin https://github.com/boostorg/boost.git
-    #- cd $BOOST_ROOT && git fetch --depth=1
-    #- cd $BOOST_ROOT && git checkout $BOOST_BRANCH
-    #- cd $BOOST_ROOT && git submodule update --init --merge
-    #- cd $BOOST_ROOT && git remote set-branches --add origin $BOOST_BRANCH
-    #- cd $BOOST_ROOT && git pull --recurse-submodules
-    #- cd $BOOST_ROOT && git submodule update --init
-    #- cd $BOOST_ROOT && git checkout $BOOST_BRANCH
-    #- cd $BOOST_ROOT && git submodule foreach "git reset --quiet --hard; git clean -fxd"
-    #- cd $BOOST_ROOT && git reset --hard; git clean -fxd
-    #- cd $BOOST_ROOT && git status
+    - mkdir $BOOST_ROOT
+    - cd $BOOST_ROOT && git init .
+    - cd $BOOST_ROOT && git remote add --no-tags -t $BOOST_BRANCH origin https://github.com/boostorg/boost.git
+    - cd $BOOST_ROOT && git fetch --depth=1
+    - cd $BOOST_ROOT && git checkout $BOOST_BRANCH
+    - cd $BOOST_ROOT && git submodule update --init --merge
+    - cd $BOOST_ROOT && git remote set-branches --add origin $BOOST_BRANCH
+    - cd $BOOST_ROOT && git pull --recurse-submodules
+    - cd $BOOST_ROOT && git submodule update --init
+    - cd $BOOST_ROOT && git checkout $BOOST_BRANCH
+    - cd $BOOST_ROOT && git submodule foreach "git reset --quiet --hard; git clean -fxd"
+    - cd $BOOST_ROOT && git reset --hard; git clean -fxd
+    - cd $BOOST_ROOT && git status
 
     # checkout the Boost.Geometry commit
     # done below for each test
     #- cd $2/libs/geometry && git checkout $f
 
     # build b2
-    #- cd $BOOST_ROOT && ./bootstrap.sh
-    #- cd $BOOST_ROOT && ./b2 headers
+    - cd $BOOST_ROOT && ./bootstrap.sh
+    - cd $BOOST_ROOT && ./b2 headers
 
     # clone benchmark repository
     - git clone git@github.com:awulkiew/$BENCHMARK_DIR $BENCHMARK_DIR
@@ -65,18 +65,15 @@ test:
   override:
     # ./run.sh BOOST_ROOT TIMESTAMP SHA
     #- cd $BENCHMARK_DIR && ./run.sh $BOOST_ROOT `cd $BOOST_ROOT/libs/geometry && date -d"\`git show --quiet --format="%ci"\`" --utc +%Y.%m.%d-%H:%M:%S` `cat $PROJECT_ROOT/sha`
-    #- ./run.sh $BENCHMARK_ROOT $BOOST_ROOT
-    - mkdir $BENCHMARK_DIR/results
-    - touch $BENCHMARK_DIR/results/test
+    - ./run.sh $BENCHMARK_ROOT $BOOST_ROOT
 
   post:
-    #- cd $BENCHMARK_DIR && git add results
-    #- cd $BENCHMARK_DIR && git commit -m "`cat $PROJECT_ROOT/sha`"
-    #- cp $BENCHMARK_DIR/results/* $CIRCLE_ARTIFACTS/
     - git config --global user.name "awulkiew-machine"
     - git config --global user.email "awulkiew.machine@gmail.com"
     - git config --global push.default simple
 
     - cd $BENCHMARK_DIR && git add results
-    - cd $BENCHMARK_DIR && git commit -m 'Test'
+    - cd $BENCHMARK_DIR && git commit -m "`cat $PROJECT_ROOT/sha`"
     - cd $BENCHMARK_DIR && git push
+
+    - mv $BENCHMARK_DIR/results/* $CIRCLE_ARTIFACTS/
