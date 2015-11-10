@@ -3,6 +3,9 @@
 # $1 - BENCHMARK_DIR
 # $2 - BOOST_ROOT
 
+pwd
+ls
+
 for f in `cat sha`; do
 
     echo "SHA: $f"
