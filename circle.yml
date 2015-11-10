@@ -16,6 +16,7 @@ machine:
     # helper variables
     PROJECT_ROOT: $HOME/$CIRCLE_PROJECT_REPONAME
     BOOST_ROOT: $PROJECT_ROOT/$BOOST_DIR
+    BENCHMARK_ROOT: $PROJECT_ROOT/$BENCHMARK_DIR
 
 dependencies:
   pre:
@@ -64,7 +65,7 @@ test:
   override:
     # ./run.sh BOOST_ROOT TIMESTAMP SHA
     #- cd $BENCHMARK_DIR && ./run.sh $BOOST_ROOT `cd $BOOST_ROOT/libs/geometry && date -d"\`git show --quiet --format="%ci"\`" --utc +%Y.%m.%d-%H:%M:%S` `cat $PROJECT_ROOT/sha`
-    - ./run.sh $BENCHMARK_DIR $BOOST_ROOT
+    - ./run.sh $BENCHMARK_ROOT $BOOST_ROOT
 
   post:
     #- cd $BENCHMARK_DIR && git add results

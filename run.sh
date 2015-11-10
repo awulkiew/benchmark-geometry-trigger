@@ -1,10 +1,7 @@
 #!/bin/bash
 
-# $1 - BENCHMARK_DIR
+# $1 - BENCHMARK_ROOT
 # $2 - BOOST_ROOT
-
-pwd
-ls
 
 for f in `cat sha`; do
 
