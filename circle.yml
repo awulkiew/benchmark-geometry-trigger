@@ -63,14 +63,16 @@ dependencies:
 
 test:
   override:
-    # ./run.sh BOOST_ROOT TIMESTAMP SHA
-    #- cd $BENCHMARK_DIR && ./run.sh $BOOST_ROOT `cd $BOOST_ROOT/libs/geometry && date -d"\`git show --quiet --format="%ci"\`" --utc +%Y.%m.%d-%H:%M:%S` `cat $PROJECT_ROOT/sha`
-    - ./run.sh $BENCHMARK_ROOT $BOOST_ROOT
+    # run scripts
+    - ./run_benchmarks.sh $BENCHMARK_ROOT $BOOST_ROOT
 
   post:
     - git config --global user.name "awulkiew-machine"
     - git config --global user.email "awulkiew.machine@gmail.com"
     - git config --global push.default simple
+
+    # generate reports
+    - ./run_reports.sh $BENCHMARK_ROOT $BOOST_ROOT
 
     - cd $BENCHMARK_DIR && git add results
     - cd $BENCHMARK_DIR && git commit -m "`cat $PROJECT_ROOT/sha`"

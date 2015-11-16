@@ -12,8 +12,8 @@ for f in `cat sha`; do
     # update headers
     cd $2 && ./b2 headers
 
-    # ./run.sh BOOST_ROOT TIMESTAMP SHA
-    cd $1 && ./run.sh $2 `cd $2/libs/geometry && date -d"\`git show --quiet --format="%ci"\`" --utc +%Y.%m.%d-%H:%M:%S` $f
+    # run benchmarks
+    cd $1 && ./run_benchmarks.sh $2 $f
 
 done
 
