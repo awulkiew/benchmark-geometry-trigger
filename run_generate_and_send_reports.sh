@@ -20,10 +20,10 @@ for i in `seq 1 5`; do
     cd $1 && git commit -m "`cat $PROJECT_ROOT/sha`"
     cd $1 && git push
 
-    if [ $? -eq 0 ] then
+    if [ $? -eq 0 ]; then
         echo "OK"
         exit 0
-    elif [ $i -le 5 ] then
+    elif [ $i -le 5 ]; then
         echo "Error. Cleanup and try again."
         cd $1 && git reset HEAD^
         cd $1 && rm -Rf results/*
