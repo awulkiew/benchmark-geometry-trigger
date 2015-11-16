@@ -67,15 +67,7 @@ test:
     - ./run_benchmarks.sh $BENCHMARK_ROOT $BOOST_ROOT
 
   post:
-    - git config --global user.name "awulkiew-machine"
-    - git config --global user.email "awulkiew.machine@gmail.com"
-    - git config --global push.default simple
-
     # generate reports
-    - ./run_reports.sh $BENCHMARK_ROOT $BOOST_ROOT
-
-    - cd $BENCHMARK_DIR && git add results
-    - cd $BENCHMARK_DIR && git commit -m "`cat $PROJECT_ROOT/sha`"
-    - cd $BENCHMARK_DIR && git push
-
+    - ./run_generate_and_send_reports.sh $BENCHMARK_ROOT $BOOST_ROOT
+    # output artifacts
     - mv $BENCHMARK_DIR/results/* $CIRCLE_ARTIFACTS/
