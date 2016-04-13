@@ -20,21 +20,6 @@ machine:
 
 dependencies:
   pre:
-    - sudo apt-get update
-
-    # gcc, g++, gcov
-    - sudo apt-get install gcc-4.8 g++-4.8 build-essential
-    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 10
-    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 10
-    - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-4.8 10
-    - sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 20
-    - sudo update-alternatives --set cc /usr/bin/gcc
-    - sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++ 20
-    - sudo update-alternatives --set c++ /usr/bin/g++
-    - sudo update-alternatives --config gcc
-    - sudo update-alternatives --config g++
-    - sudo update-alternatives --config gcov
-
     # clone boost repository
     - mkdir $BOOST_ROOT
     - cd $BOOST_ROOT && git init .
