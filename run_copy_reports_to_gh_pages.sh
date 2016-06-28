@@ -9,7 +9,7 @@
 
 #cd $1 && git checkout master
 
-cp $1/reports/* $2/
+cp $1/results/* $2/
 
 cd $1 && git checkout gh-pages
 cd $1 && git pull
@@ -17,7 +17,7 @@ cd $1 && git pull
 for i in `seq 1 5`; do
 
     echo "Copy reports to gh-pages"
-    cd $1 && rm -f ./*.html
+    cd $1 && rm -Rf ./*
     cp $2/*.html $1/
 
     echo "Push gh-pages"
@@ -31,7 +31,7 @@ for i in `seq 1 5`; do
     elif [ $i -le 5 ]; then
         echo "Cleanup"
         cd $1 && git reset HEAD^
-        cd $1 && rm -f ./*.html
+        cd $1 && rm -Rf ./*
         cd $1 && git checkout .
         echo "Pull"
         cd $1 && git pull
