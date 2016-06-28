@@ -54,5 +54,5 @@ test:
   post:
     # generate reports
     - ./run_generate_and_send_reports.sh $BENCHMARK_ROOT $BOOST_ROOT
-    # output artifacts
-    - mv $BENCHMARK_DIR/results/* $CIRCLE_ARTIFACTS/
+    # generate gh-pages
+    - if [ $? -eq 0 ]; then ./run_copy_reports_to_gh_pages.sh $BENCHMARK_ROOT $CIRCLE_ARTIFACTS ; fi
