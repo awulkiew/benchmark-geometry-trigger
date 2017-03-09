@@ -49,10 +49,12 @@ dependencies:
     - git clone git@github.com:awulkiew/$BENCHMARK_DIR $BENCHMARK_DIR
 
     # prepare results (same repository, different branch)
-    - cp -R $BENCHMARK_ROOT $RESULTS_ROOT && git checkout results && git pull
+    - cp -R $BENCHMARK_ROOT $RESULTS_ROOT
+    - cd $RESULTS_ROOT && git checkout results && git pull
 
     # prepare gh-pages (same repository, different branch)
-    - cp -R $BENCHMARK_ROOT $PAGES_ROOT && git checkout gh-pages && git pull
+    - cp -R $BENCHMARK_ROOT $PAGES_ROOT
+    - cd $PAGES_ROOT && git checkout gh-pages && git pull
 
 test:
   override:
