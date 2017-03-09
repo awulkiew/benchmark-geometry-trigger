@@ -2,6 +2,8 @@
 
 # $1 - BENCHMARK_ROOT
 # $2 - BOOST_ROOT
+# $3 - RESULTS_ROOT
+# $4 - PAGES_ROOT
 
 git config --global user.name "awulkiew-machine"
 git config --global user.email "awulkiew.machine@gmail.com"
@@ -14,24 +16,32 @@ for i in `seq 1 5`; do
 
     echo "Generate reports"
     for f in `cat $PROJECT_ROOT/sha`; do
-        cd $1 && ./run_report.sh `cd $2/libs/geometry && date -d"\`git show --quiet --format="%ci"\`" --utc +%Y.%m.%d-%H:%M:%S` $f
+        cd $1 && ./run_report.sh `cd $2/libs/geometry && date -d"\`git show --quiet --format="%ci"\`" --utc +%Y.%m.%d-%H:%M:%S` $f $3
     done
 
-    echo "Push the reports"
-    cd $1 && git add results
-    cd $1 && git commit -m "`cat $PROJECT_ROOT/sha`"
-    cd $1 && git push
+    mv $3/*.html $4/
+
+    echo "Push results"
+    cd $3 && git add . && git commit -m "`cat $PROJECT_ROOT/sha`" && git push
+
+    if [ $? -eq 0 ]; then
+        echo "Push gh-pages"
+        cd $4 && git add . && git commit -m "`cat $PROJECT_ROOT/sha`" && git push
+    fi
 
     if [ $? -eq 0 ]; then
         echo "OK"
+        # generate artifacts for logging purposes
+        mkdir -p $CIRCLE_ARTIFACTS/results
+        cp $3/*.txt $CIRCLE_ARTIFACTS/results/
+        mkdir -p $CIRCLE_ARTIFACTS/results-html
+        cp $4/*.html $CIRCLE_ARTIFACTS/results-html/
         exit 0
     elif [ $i -le 5 ]; then
-        echo "Cleanup"
-        cd $1 && git reset HEAD^
-        cd $1 && rm -Rf results/*
-        cd $1 && git checkout results
-        echo "Pull"
-        cd $1 && git pull
+        echo "Cleanup results"
+        cd $3 && git reset HEAD^ && rm -Rf * && git checkout . && git pull
+        echo "Cleanup gh-pages"
+        cd $4 && git reset HEAD^ && rm -Rf * && git checkout . && git pull
     fi
 
 done

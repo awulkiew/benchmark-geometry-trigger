@@ -17,6 +17,8 @@ machine:
     PROJECT_ROOT: $HOME/$CIRCLE_PROJECT_REPONAME
     BOOST_ROOT: $PROJECT_ROOT/$BOOST_DIR
     BENCHMARK_ROOT: $PROJECT_ROOT/$BENCHMARK_DIR
+    RESULTS_ROOT: $PROJECT_ROOT/results
+    PAGES_ROOT: $PROJECT_ROOT/results-html
 
 dependencies:
   pre:
@@ -46,6 +48,12 @@ dependencies:
     # clone benchmark repository
     - git clone git@github.com:awulkiew/$BENCHMARK_DIR $BENCHMARK_DIR
 
+    # prepare results (same repository, different branch)
+    - cp -R $BENCHMARK_ROOT $RESULTS_ROOT && git checkout results && git pull
+
+    # prepare gh-pages (same repository, different branch)
+    - cp -R $BENCHMARK_ROOT $PAGES_ROOT && git checkout gh-pages && git pull
+
 test:
   override:
     # run scripts
@@ -53,6 +61,4 @@ test:
 
   post:
     # generate reports
-    - ./run_generate_and_send_reports.sh $BENCHMARK_ROOT $BOOST_ROOT
-    # generate gh-pages
-    - if [ $? -eq 0 ]; then ./run_copy_reports_to_gh_pages.sh $BENCHMARK_ROOT $CIRCLE_ARTIFACTS ; fi
+    - ./run_generate_and_send_reports.sh $BENCHMARK_ROOT $BOOST_ROOT $RESULTS_ROOT $PAGES_ROOT
