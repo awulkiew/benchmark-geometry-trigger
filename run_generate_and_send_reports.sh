@@ -20,6 +20,8 @@ for i in `seq 1 5`; do
     done
 
     mv $3/*.html $4/
+    mv $3/*.js $4/
+    mv $3/*.json $4/
 
     echo "Push results"
     cd $3 && git add . && git commit -m "`cat $PROJECT_ROOT/sha`" && git push
@@ -33,9 +35,9 @@ for i in `seq 1 5`; do
         echo "OK"
         # generate artifacts for logging purposes
         mkdir -p $CIRCLE_ARTIFACTS/results
-        cp $3/*.txt $CIRCLE_ARTIFACTS/results/
-        mkdir -p $CIRCLE_ARTIFACTS/results-html
-        cp $4/*.html $CIRCLE_ARTIFACTS/results-html/
+        cp $3/* $CIRCLE_ARTIFACTS/results/
+        mkdir -p $CIRCLE_ARTIFACTS/gh-pages
+        cp $4/* $CIRCLE_ARTIFACTS/gh-pages/
         mkdir -p $CIRCLE_ARTIFACTS/temp
         cp $BENCHMARK_ROOT/temp/* $CIRCLE_ARTIFACTS/temp/
         exit 0
