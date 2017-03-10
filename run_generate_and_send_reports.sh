@@ -36,6 +36,8 @@ for i in `seq 1 5`; do
         cp $3/*.txt $CIRCLE_ARTIFACTS/results/
         mkdir -p $CIRCLE_ARTIFACTS/results-html
         cp $4/*.html $CIRCLE_ARTIFACTS/results-html/
+        mkdir -p $CIRCLE_ARTIFACTS/temp
+        cp $BENCHMARK_ROOT/temp/* $CIRCLE_ARTIFACTS/temp/
         exit 0
     elif [ $i -le 5 ]; then
         echo "Cleanup results"
