@@ -9,6 +9,8 @@ git config --global user.name "awulkiew-machine"
 git config --global user.email "awulkiew.machine@gmail.com"
 git config --global push.default simple
 
+status=1
+
 for i in `seq 1 5`; do
 
     pwd
@@ -25,23 +27,18 @@ for i in `seq 1 5`; do
 
     echo "Push results"
     cd $3 && git add . && git commit -m "`cat $PROJECT_ROOT/sha`" && git push
-
-    if [ $? -eq 0 ]; then
+	status=$?
+	
+    if [ $status -eq 0 ]; then
         echo "Push gh-pages"
         cd $4 && git add . && git commit -m "`cat $PROJECT_ROOT/sha`" && git push
+		status=$?
     fi
 
-    if [ $? -eq 0 ]; then
+    if [ $status -eq 0 ]; then
         echo "OK"
-        # generate artifacts for logging purposes
-        mkdir -p $CIRCLE_ARTIFACTS/results
-        cp $3/* $CIRCLE_ARTIFACTS/results/
-        mkdir -p $CIRCLE_ARTIFACTS/gh-pages
-        cp $4/* $CIRCLE_ARTIFACTS/gh-pages/
-        mkdir -p $CIRCLE_ARTIFACTS/temp
-        cp $BENCHMARK_ROOT/temp/* $CIRCLE_ARTIFACTS/temp/
-        exit 0
-    elif [ $i -le 5 ]; then
+        break
+    elif [ $i -lt 5 ]; then
         echo "Cleanup results"
         cd $3 && git reset HEAD^ && rm -Rf * && git checkout . && git pull
         echo "Cleanup gh-pages"
@@ -50,4 +47,12 @@ for i in `seq 1 5`; do
 
 done
 
-exit 1
+# generate artifacts for logging purposes
+mkdir -p $CIRCLE_ARTIFACTS/results
+cp $3/* $CIRCLE_ARTIFACTS/results/
+mkdir -p $CIRCLE_ARTIFACTS/gh-pages
+cp $4/* $CIRCLE_ARTIFACTS/gh-pages/
+mkdir -p $CIRCLE_ARTIFACTS/temp
+cp $BENCHMARK_ROOT/temp/* $CIRCLE_ARTIFACTS/temp/
+
+exit $status
