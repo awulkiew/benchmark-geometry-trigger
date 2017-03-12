@@ -15,6 +15,7 @@ for i in `seq 1 5`; do
 
     echo "Generate reports"
     for f in `cat $PROJECT_ROOT/sha`; do
+		cd $2/libs/geometry && git checkout $f
         cd $1 && ./run_report.sh `cd $2/libs/geometry && date -d"\`git show --quiet --format="%ci"\`" --utc +%Y.%m.%d-%H:%M:%S` $f $3
     done
 
